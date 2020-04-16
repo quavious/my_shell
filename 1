@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+/*
+char** get_path(char* ch)
+{
+	int argc = 2;
+	int i, j=0;
+	char *env, *str;
+	char *tok[100], *saveptr;
+	if (argc == 1)	{
+		printf("usage: getenv env_vars ... \n");
+		return 0;
+	} else {
+		for (i = 0 ; i < argc-1 ; i++) {
+			env = getenv(ch);
+			
+			for (j=0,str=env; ;str= NULL,j++) {
+				tok[j] = strtok_r(str, ":", &saveptr);
+				if (tok[j] == NULL) break;
+			}
+		}
+	}
+
+	return tok;
+}
+*/
+int main(void){
+	char *ptr, *ch;
+	char *tok[20];
+	char *next_ptr;
+	int i =0;
+
+	ch = getenv("PATH");
+	for(i=0, ptr=ch; ;ptr=NULL,i++){
+		tok[i] = strtok_r(ptr, ":", &next_ptr);
+		if(tok[i] == NULL) break;
+	}
+
+	return 0;
+}
