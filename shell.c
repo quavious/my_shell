@@ -5,8 +5,9 @@
 #include <sys/wait.h>
 
 void custom_signal(int signo){
-	printf("input exit to quit \n");
-	exit(1);
+	
+	signal(signo, SIG_IGN);
+	printf("\nAGAIN : ");
 }
 
 char** get_env(void){
