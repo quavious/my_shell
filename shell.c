@@ -3,11 +3,27 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <signal.h>
 
 void custom_signal(int signo){
 	
 	signal(signo, SIG_IGN);
 	printf("\nAGAIN : ");
+}
+
+void print_env(char* ch){ // getenv 환경변수 출력 및 화면 clear로 지우기
+  if(strcmp(ch, "clear")==0) {
+    printf("\033[0;0H\033[2J"); //이 문자열을 출력하여 콘솔 창 지우기
+  }
+  else if(strcmp(ch, "home")==0){
+    printf("%s\n",getenv("HOME"));
+  }
+  else if(strcmp(ch, "shell")==0){
+    printf("%s\n",getenv("SHELL"));
+  }
+  else if(strcmp(ch, "hostname")==0){
+    printf("%s\n",getenv("HOSTNAME"));
+  }
 }
 
 char** get_env(void){ // 환경변수 설정 함수
@@ -22,23 +38,6 @@ char** get_env(void){ // 환경변수 설정 함수
 	}
 	tok[i] = NULL; //환경변수 배열 마지막에는 null이 있어야 함
 	return tok;
-}
-
-char **get_input(char *input){
-	char **command = malloc(8 * sizeof(char *));
-	char *separator = " ";
-	char *parsed, *nextptr;
-	int index = 0;
-
-	parsed = strtok_r(input, separator, &nextptr);
-	while(parsed != NULL){
-		command[index] = parsed;
-		index++;
-		parsed = strtok_r(NULL, separator, &nextptr);
-	}
-
-	command[index] = NULL;
-	return command;
 }
 
 int cd(char *path){
@@ -73,18 +72,24 @@ int main(void) {
 		
 		printf("custom shell | %s $>", getcwd(buf, 255));
 		fgets(input,19,stdin); 
-		//input[strlen(input) - 1] = '\0';
+
+		if(strlen(input)>19){
+			printf("TOO LONG COMMAND \n");
+			continue;
+		}
 		
 		ptr = strchr(input, '\n');
 		if(ptr) *ptr=0; // 문자열 맨 끝 개행 문자 없애기
 
 		if(strcmp("exit",input) == 0) { //exit 명령어 뜨면 종료하도록
-			//free(input);
 			printf("Exiting...\n");
 			break;
 		}
+		if(strcmp(input, "clear")==0 || strcmp(input, "home")==0 || strcmp(input, "shell")==0 || strcmp(input, "hostname")==0){
+			print_env(input);
+			continue;
+		} // clear 입력시 화면 지울 수 있고 또한 환경변수 출력 가능
 
-		//command = get_input(input);
 		parsed = strtok_r(input, " ",&nextptr);
 	       	while(parsed) {
 			command[i] = parsed;
@@ -115,9 +120,6 @@ int main(void) {
 		if(pid > 0){
 			wait(&stat_loc);
 		}
-
-		//free(command);
-		//free(input);
 	}
 	return 0;
 }
