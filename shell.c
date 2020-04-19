@@ -8,7 +8,14 @@
 void custom_signal(int signo){
 	
 	signal(signo, SIG_IGN);
-	printf("\nAGAIN : ");
+	printf("\nINPUT quit TO QUIT COMMAND AGAIN\n");
+}
+
+void print_path(char *pa[]){
+	int i=0;
+	for(i=0;pa[i]!=NULL;i++){
+		printf("%s \n", pa[i])
+	}
 }
 
 void print_env(char* ch){ // getenv 환경변수 출력 및 화면 clear로 지우기
@@ -89,6 +96,10 @@ int main(void) {
 			print_env(input);
 			continue;
 		} // clear 입력시 화면 지울 수 있고 또한 환경변수 출력 가능
+		if(strcmp(input, "path")==0 || strcmp(input, "PATH")==0){
+			print_path(env);
+			continue;
+		}
 
 		parsed = strtok_r(input, " ",&nextptr);
 	       	while(parsed) {
